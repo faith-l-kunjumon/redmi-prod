@@ -28,3 +28,15 @@ variable "project_owner" {
     default     = "faith"
 }
 
+variable "hosted_zone_name" {
+    type = string
+    description = "domain name"
+    default = "mrfaith.shop"
+}
+
+variable "hostname" {
+    type = string
+    description = "hostname name"
+    default = "shopping"
+}
+

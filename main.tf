@@ -108,4 +108,16 @@ resource "aws_instance" "frontend" {
  }
 }
 
+#-----------------------------------
+# creating records
+#-----------------------------------
+
+resource "aws_route53_record" "frontend" {
+  zone_id = data.aws_route53_zone.mydomain.zone_id
+  name    = "${var.hostname}.${var.hosted_zone_name}"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.frontend.public_ip]
+}
+
 
