@@ -80,3 +80,22 @@ resource "aws_security_group" "remote-access" {
 }
 
 
+#----------------------
+#instance
+#----------------------
+
+resource "aws_instance" "frontend" {
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  user_data              = file("setup.sh")
+  key_name               = aws_key_pair.mykey.key_name
+  vpc_security_group_ids = [aws_security_group.frontend.id, aws_security_group.remote-access.id ]
+
+  tags = {
+    Name    = "${var.project_name}-${var.project_env}"
+    Project = var.project_name
+    Env = var.project_env
+ }
+}
+
+
