@@ -2,11 +2,11 @@ resource "aws_key_pair" "mykey" {
   key_name   = "${var.project_name}-${var.project_env}-key"
   public_key = file("mykey.pub")
 
-    tags = {
+  tags = {
     Name    = "${var.project_name}-${var.project_env}"
     Project = var.project_name
-    Env = var.project_env
-    }
+    Env     = var.project_env
+  }
 }
 
 resource "aws_security_group" "frontend" {
@@ -14,20 +14,29 @@ resource "aws_security_group" "frontend" {
   description = "${var.project_name}.${var.project_env}-frontend"
 
   ingress {
-    description = "TLS from VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description      = "TLS from VPC"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
-    description = "HTTP from VPC"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description      = "TLS from VPC"
+    from_port        = 9090
+    to_port          = 9090
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "HTTP from VPC"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -56,20 +65,20 @@ resource "aws_security_group" "remote-access" {
 
 
   ingress {
-    description = "SSH from VPC"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description      = "SSH from VPC"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
-ingress {
-    description = "SSH from VPC"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  ingress {
+    description      = "SSH from VPC"
+    from_port        = 3306
+    to_port          = 3306
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -99,13 +108,13 @@ resource "aws_instance" "frontend" {
   instance_type          = var.instance_type
   user_data              = file("setup.sh")
   key_name               = aws_key_pair.mykey.key_name
-  vpc_security_group_ids = [aws_security_group.frontend.id, aws_security_group.remote-access.id ]
+  vpc_security_group_ids = [aws_security_group.frontend.id, aws_security_group.remote-access.id]
 
   tags = {
     Name    = "${var.project_name}-${var.project_env}"
     Project = var.project_name
-    Env = var.project_env
- }
+    Env     = var.project_env
+  }
 }
 
 #-----------------------------------
@@ -117,9 +126,9 @@ resource "aws_eip" "myeip" {
   domain   = "vpc"
 
   tags = {
-    Name = "${var.project_name}-${var.project_env}-myeip"
+    Name    = "${var.project_name}-${var.project_env}-myeip"
     Project = var.project_name
-    Env = var.project_env
+    Env     = var.project_env
   }
 }
 
